@@ -58,7 +58,7 @@ export const login = async (req, res) => {
     }
 }
 
-export const refreshToken = (req, res) => {
+export const refresh = (req, res) => {
     try {
         const { token } = req.body;
         if (!token) {
