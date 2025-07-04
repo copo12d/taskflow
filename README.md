@@ -149,5 +149,3 @@ API RESTful para gestión de tareas con autenticación JWT, roles de usuario y r
 - Puedes extender la API para más entidades o funcionalidades.
 
 ---
-
-¡Listo para usar y subir a GitHub!
