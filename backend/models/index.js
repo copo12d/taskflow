@@ -1,3 +1,5 @@
+// Inicializa y exporta los modelos de Sequelize y sus relaciones
+
 import User from './User.js';
 import Task from './Task.js';
 

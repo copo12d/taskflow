@@ -1,3 +1,6 @@
+// Configuración de la conexión a la base de datos PostgreSQL usando Sequelize
+// Lee variables de entorno para host, usuario, contraseña, base de datos y puerto
+
 import { Sequelize } from "sequelize";
 import dotenv from 'dotenv';
 

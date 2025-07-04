@@ -1,3 +1,6 @@
+// Utilidades para generación y verificación de tokens JWT y refresh tokens
+// Incluye funciones para crear, verificar y renovar tokens
+
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -11,7 +14,7 @@ export function generateAccessToken(user) {
     return jwt.sign(
         { id:user.id, role:user.role },
         JWT_SECRET,
-        { expiresIn:'15m' }
+        { expiresIn:'40m' }
     )
 }
 
@@ -21,7 +24,7 @@ export function generateRefreshToken(user) {
     return jwt.sign(
         { id: user.id },
         JWT_REFRESH_SECRET,
-        { expiresIn:'1m' }
+        { expiresIn:'40m' }
     )
 }
 

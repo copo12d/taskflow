@@ -2,6 +2,9 @@ import bcrypt from "bcrypt";
 import { User } from "../models/index.js";
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../utils/jwt.js";
 
+// Controlador de autenticación: gestiona registro, login, refresh y registro de admin
+// Implementa la lógica de negocio para usuarios y autenticación
+
 export const register = async (req, res) => {
     try {
         const {username, email, password, role} = req.body;
@@ -79,3 +82,24 @@ export const refresh = (req, res) => {
         res.status(403).json({ message: "Token inválido" });
     }
 }
+
+export const registerAdmin = async (req, res) => {
+    try {
+        const { username, email, password } = req.body;
+        const existing = await User.findOne({ where: { email } });
+        if (existing) {
+            return res.status(400).json({ message: "El usuario ya existe" });
+        }
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = await User.create({
+            username,
+            email,
+            password: hashedPassword,
+            role: "admin"
+        });
+        res.status(201).json({ message: "Administrador registrado" });
+    } catch (error) {
+        console.error("Error en registro de admin:", error);
+        res.status(500).json({ message: "Error en el servidor" });
+    }
+};

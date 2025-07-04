@@ -1,3 +1,7 @@
+// Modelo de Tarea: define la estructura de la tabla 'Tasks' en la base de datos
+// Incluye campos: id, title, description, status, userId (asignado)
+// Se utiliza para operaciones CRUD y asignación de tareas
+
 import { DataTypes } from "sequelize";
 import sequelize from "../config/database.js";
 
@@ -22,6 +26,14 @@ const Task = sequelize.define('Task', {
     dueDate: {
         type: DataTypes.DATE,
         allowNull: true,
+    },
+    userId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'Users',
+            key: 'id',
+        },
     },
   },
   {
