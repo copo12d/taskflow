@@ -35,7 +35,7 @@ API RESTful para gestión de tareas con autenticación JWT, roles de usuario y r
 
 1. **Clona el repositorio:**
    ```bash
-   git clone TU_URL_GITHUB
+   git clone https://github.com/copo12d/taskflow.git
    cd backend
    ```
 
