@@ -1,0 +1,90 @@
+<div class="dashboard-container">
+  <!-- Header -->
+  <header class="dashboard-header">
+    <div class="header-content">
+      <h1>TaskFlow Dashboard</h1>
+      <div class="user-info">
+        <span>Bienvenido, {{ currentUser?.username }}</span>
+        <span class="user-role" [class]="currentUser?.role">{{ currentUser?.role }}</span>
+        <button class="btn btn-secondary" (click)="logout()">Cerrar Sesión</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation -->
+  <nav class="dashboard-nav">
+    <button class="nav-btn" (click)="goToTasks()">Todas las Tareas</button>
+    <button class="nav-btn" *ngIf="currentUser?.role === 'admin'" (click)="goToAdmin()">Panel Admin</button>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="dashboard-main">
+    <div class="loading" *ngIf="loading">
+      <p>Cargando tareas...</p>
+    </div>
+
+    <div class="error" *ngIf="error">
+      <p>{{ error }}</p>
+    </div>
+
+    <div class="dashboard-content" *ngIf="!loading && !error">
+      <!-- Stats Cards -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <h3>Total de Tareas</h3>
+          <div class="stat-number">{{ myTasks.length }}</div>
+        </div>
+        <div class="stat-card pending">
+          <h3>Pendientes</h3>
+          <div class="stat-number">{{ getTasksByStatus('pending').length }}</div>
+        </div>
+        <div class="stat-card in-progress">
+          <h3>En Progreso</h3>
+          <div class="stat-number">{{ getTasksByStatus('in_progress').length }}</div>
+        </div>
+        <div class="stat-card completed">
+          <h3>Completadas</h3>
+          <div class="stat-number">{{ getTasksByStatus('completed').length }}</div>
+        </div>
+      </div>
+
+      <!-- Admin Quick Actions -->
+      <div class="admin-actions" *ngIf="currentUser?.role === 'admin'">
+        <h2>Acciones de Administrador</h2>
+        <div class="quick-actions">
+          <button class="btn btn-primary" (click)="goToTasks()">📋 Gestionar Todas las Tareas</button>
+          <button class="btn btn-success" (click)="goToCreateTask()">➕ Crear Nueva Tarea</button>
+          <button class="btn btn-info" (click)="goToAdmin()">⚙️ Panel de Administración</button>
+        </div>
+      </div>
+
+      <!-- Recent Tasks -->
+      <section class="recent-tasks">
+        <h2>{{ currentUser?.role === 'admin' ? 'Todas las Tareas Recientes' : 'Mis Tareas Recientes' }}</h2>
+        <div class="tasks-container" *ngIf="myTasks.length > 0; else noTasks">
+          <div class="task-card" *ngFor="let task of myTasks.slice(0, 6)" [routerLink]="['/tasks', task.id]">
+            <div class="task-header">
+              <h4>{{ task.title }}</h4>
+              <span class="task-priority" [class]="getPriorityClass(task.priority)">
+                {{ task.priority }}
+              </span>
+            </div>
+            <p class="task-description">{{ task.description | slice:0:100 }}...</p>
+            <div class="task-footer">
+              <span class="task-status" [class]="getStatusClass(task.status)">
+                {{ task.status }}
+              </span>
+              <span class="task-date">{{ task.updatedAt | date:'short' }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <ng-template #noTasks>
+          <div class="no-tasks">
+            <p>No tienes tareas asignadas.</p>
+          </div>
+        </ng-template>
+      </section>
+    </div>
+  </main>
+</div>

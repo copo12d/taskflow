@@ -21,7 +21,21 @@ export const register = async (req, res) => {
             password: hashedPassword,
             role: role || "user"
         });
-        res.status(201).json({message: "Usuario registrado"});
+        
+        // Generar tokens igual que en login
+        const accessToken = generateAccessToken(newUser);
+        const refreshToken = generateRefreshToken(newUser);
+        
+        res.status(201).json({
+            accessToken,
+            refreshToken,
+            user: {
+                id: newUser.id,
+                username: newUser.username,
+                email: newUser.email,
+                role: newUser.role
+            }
+        });
     } catch (error) {
         console.error("Error en registro:", error);
         res.status(500).json({message: "Error en el servidor"});
@@ -97,7 +111,21 @@ export const registerAdmin = async (req, res) => {
             password: hashedPassword,
             role: "admin"
         });
-        res.status(201).json({ message: "Administrador registrado" });
+        
+        // Generar tokens igual que en login
+        const accessToken = generateAccessToken(newUser);
+        const refreshToken = generateRefreshToken(newUser);
+        
+        res.status(201).json({
+            accessToken,
+            refreshToken,
+            user: {
+                id: newUser.id,
+                username: newUser.username,
+                email: newUser.email,
+                role: newUser.role
+            }
+        });
     } catch (error) {
         console.error("Error en registro de admin:", error);
         res.status(500).json({ message: "Error en el servidor" });

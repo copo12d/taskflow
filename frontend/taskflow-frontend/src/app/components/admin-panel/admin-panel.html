@@ -1,0 +1,132 @@
+<div class="admin-panel">
+  <!-- Header -->
+  <header class="admin-header">
+    <div class="header-content">
+      <h1>Panel de Administración</h1>
+      <div class="header-actions">
+        <span class="user-info">Admin: {{ currentUser?.username }}</span>
+        <button class="btn btn-secondary" (click)="goToDashboard()">Dashboard</button>
+        <button class="btn btn-secondary" (click)="logout()">Cerrar Sesión</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <div class="loading" *ngIf="loading">
+      <p>Cargando datos del panel...</p>
+    </div>
+
+    <div class="error" *ngIf="error">
+      <p>{{ error }}</p>
+      <button class="btn btn-primary" (click)="loadData()">Reintentar</button>
+    </div>
+
+    <div class="admin-content" *ngIf="!loading && !error">
+      <!-- Stats Section -->
+      <section class="stats-section">
+        <h2>📊 Estadísticas del Sistema</h2>
+        <div class="stats-grid">
+          <div class="stat-card total">
+            <h3>Total de Tareas</h3>
+            <div class="stat-number">{{ stats.totalTasks }}</div>
+          </div>
+          <div class="stat-card users">
+            <h3>Total de Usuarios</h3>
+            <div class="stat-number">{{ stats.totalUsers }}</div>
+          </div>
+          <div class="stat-card completed">
+            <h3>Tareas Completadas</h3>
+            <div class="stat-number">{{ stats.completedTasks }}</div>
+          </div>
+          <div class="stat-card pending">
+            <h3>Tareas Pendientes</h3>
+            <div class="stat-number">{{ stats.pendingTasks }}</div>
+          </div>
+          <div class="stat-card in-progress">
+            <h3>En Progreso</h3>
+            <div class="stat-number">{{ stats.inProgressTasks }}</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quick Actions Section -->
+      <section class="quick-actions-section">
+        <h2>⚡ Acciones Rápidas</h2>
+        <div class="action-buttons">
+          <button class="btn btn-primary" (click)="goToTasks()">📋 Gestionar Todas las Tareas</button>
+          <button class="btn btn-success" (click)="showQuickCreate = !showQuickCreate">
+            <span *ngIf="!showQuickCreate">➕ Crear Tarea Rápida</span>
+            <span *ngIf="showQuickCreate">❌ Cerrar Formulario</span>
+          </button>
+        </div>
+
+        <!-- Quick Create Form -->
+        <div class="quick-create-form" *ngIf="showQuickCreate">
+          <h3>✨ Crear Nueva Tarea</h3>
+          <div class="form-group">
+            <label for="quickTitle">Título:</label>
+            <input 
+              type="text" 
+              id="quickTitle" 
+              [(ngModel)]="quickTask.title" 
+              class="form-control"
+              placeholder="Título de la tarea"
+            >
+          </div>
+          <div class="form-group">
+            <label for="quickDescription">Descripción:</label>
+            <textarea 
+              id="quickDescription" 
+              [(ngModel)]="quickTask.description" 
+              class="form-control" 
+              rows="3"
+              placeholder="Descripción detallada de la tarea"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="quickPriority">Prioridad:</label>
+            <select id="quickPriority" [(ngModel)]="quickTask.priority" class="form-control">
+              <option value="low">🟢 Baja</option>
+              <option value="medium">🟡 Media</option>
+              <option value="high">🔴 Alta</option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button 
+              class="btn btn-success" 
+              (click)="createQuickTask()"
+              [disabled]="!quickTask.title || !quickTask.description"
+            >
+              ✅ Crear Tarea
+            </button>
+            <button class="btn btn-secondary" (click)="resetQuickCreate()">❌ Cancelar</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Recent Tasks Preview -->
+      <section class="recent-tasks-section">
+        <h2>📝 Tareas Recientes</h2>
+        <div class="tasks-preview" *ngIf="allTasks.length > 0; else noTasksYet">
+          <div class="task-preview" *ngFor="let task of allTasks.slice(0, 5)">
+            <div class="task-info">
+              <h4>{{ task.title }}</h4>
+              <p>{{ task.description | slice:0:80 }}...</p>
+            </div>
+            <div class="task-status">
+              <span class="status-badge" [ngClass]="task.status">{{ task.status }}</span>
+              <span class="priority-badge" [ngClass]="task.priority">{{ task.priority }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <ng-template #noTasksYet>
+          <div class="no-tasks">
+            <p>No hay tareas creadas aún.</p>
+            <button class="btn btn-primary" (click)="showQuickCreate = true">Crear la primera tarea</button>
+          </div>
+        </ng-template>
+      </section>
+    </div>
+  </main>
+</div>

@@ -1,15 +1,26 @@
 // Controlador de tareas: gestiona operaciones CRUD y asignación de tareas
 // Implementa la lógica de negocio para tareas, asignación y cambio de estado
 
-import Task from '../models/Task.js';
-import User from '../models/User.js';
+import { Task, User } from '../models/index.js';
 
-// Obtener todas las tareas
+// Obtener todas las tareas (solo admin)
 export const getTasks = async (req, res) => {
   try {
-    const tasks = await Task.findAll();
+    // Solo los admins pueden ver todas las tareas
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Acceso solo para administradores' });
+    }
+    
+    const tasks = await Task.findAll({
+      include: [{
+        model: User,
+        as: 'assignedUser',
+        attributes: ['id', 'username', 'email']
+      }]
+    });
     res.json(tasks);
   } catch (error) {
+    console.error('Error al obtener todas las tareas:', error);
     res.status(500).json({ message: 'Error al obtener tareas' });
   }
 };
@@ -17,9 +28,13 @@ export const getTasks = async (req, res) => {
 // Crear tarea (solo admin)
 export const createTask = async (req, res) => {
   try {
-    const { title, description } = req.body;
-    const task = await Task.create({ title, description, status: 'pending' });
-    res.status(201).json(task);
+    const { title, description, priority, userId } = req.body;
+    const task = await Task.create({ title, description, priority, status: 'pending', userId: userId || null });
+    // Devolver la tarea con el usuario asignado (si existe)
+    const createdTask = await Task.findByPk(task.id, {
+      include: [{ model: User, as: 'assignedUser', attributes: ['id', 'username', 'email'] }]
+    });
+    res.status(201).json(createdTask);
   } catch (error) {
     res.status(500).json({ message: 'Error al crear tarea' });
   }
@@ -64,7 +79,11 @@ export const assignTask = async (req, res) => {
     if (!task || !user) return res.status(404).json({ message: 'Tarea o usuario no encontrado' });
     task.userId = userId;
     await task.save();
-    res.json(task);
+    // Volver a consultar la tarea con el usuario asignado
+    const updatedTask = await Task.findByPk(id, {
+      include: [{ model: User, as: 'assignedUser', attributes: ['id', 'username', 'email'] }]
+    });
+    res.json(updatedTask);
   } catch (error) {
     res.status(500).json({ message: 'Error al asignar tarea' });
   }
@@ -92,7 +111,10 @@ export const updateTaskStatus = async (req, res) => {
 // Obtener tareas del usuario autenticado
 export const getMyTasks = async (req, res) => {
   try {
-    const tasks = await Task.findAll({ where: { userId: req.user.id } });
+    const tasks = await Task.findAll({
+      where: { userId: req.user.id },
+      include: [{ model: require('../models').User, as: 'assignedUser', attributes: ['id', 'username', 'email'] }]
+    });
     res.json(tasks);
   } catch (error) {
     res.status(500).json({ message: 'Error al obtener tus tareas' });

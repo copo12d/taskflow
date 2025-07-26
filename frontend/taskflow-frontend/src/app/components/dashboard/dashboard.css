@@ -1,0 +1,295 @@
+.dashboard-container {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+/* Header */
+.dashboard-header {
+  background: white;
+  border-bottom: 1px solid #dee2e6;
+  padding: 1rem 0;
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-content h1 {
+  color: #343a40;
+  margin: 0;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-role {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.user-role.admin {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.user-role.user {
+  background-color: #6c757d;
+  color: white;
+}
+
+/* Navigation */
+.dashboard-nav {
+  background-color: #343a40;
+  padding: 1rem 0;
+}
+
+.dashboard-nav {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.nav-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  background-color: #495057;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.nav-btn:hover {
+  background-color: #6c757d;
+}
+
+/* Main Content */
+.dashboard-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.loading, .error {
+  text-align: center;
+  padding: 2rem;
+}
+
+.error {
+  color: #dc3545;
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.stat-card h3 {
+  margin: 0 0 1rem 0;
+  color: #6c757d;
+  font-size: 1rem;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #343a40;
+}
+
+.stat-card.pending .stat-number {
+  color: #ffc107;
+}
+
+.stat-card.in-progress .stat-number {
+  color: #007bff;
+}
+
+.stat-card.completed .stat-number {
+  color: #28a745;
+}
+
+/* Admin Quick Actions */
+.admin-actions {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.admin-actions h2 {
+  margin: 0 0 1rem 0;
+  color: #343a40;
+}
+
+.quick-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn-success {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: #218838;
+}
+
+/* Recent Tasks */
+.recent-tasks {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+}
+
+.recent-tasks h2 {
+  margin: 0 0 1.5rem 0;
+  color: #343a40;
+}
+
+.tasks-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.task-card {
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: box-shadow 0.3s, transform 0.2s;
+}
+
+.task-card:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  transform: translateY(-2px);
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.task-header h4 {
+  margin: 0;
+  color: #343a40;
+}
+
+.task-priority {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.priority-high {
+  background-color: #dc3545;
+  color: white;
+}
+
+.priority-medium {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.priority-low {
+  background-color: #28a745;
+  color: white;
+}
+
+.task-description {
+  color: #6c757d;
+  margin: 0.5rem 0;
+  line-height: 1.4;
+}
+
+.task-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.task-status {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.status-pending {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.status-in-progress {
+  background-color: #007bff;
+  color: white;
+}
+
+.status-completed {
+  background-color: #28a745;
+  color: white;
+}
+
+.task-date {
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+.no-tasks {
+  text-align: center;
+  padding: 2rem;
+  color: #6c757d;
+}
+
+/* Button Styles */
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  transition: background-color 0.3s;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}

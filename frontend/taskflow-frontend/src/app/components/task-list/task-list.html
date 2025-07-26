@@ -1,0 +1,217 @@
+<div class="task-list-container">
+  <!-- Header -->
+  <header class="task-header">
+    <div class="header-content">
+      <h1>{{ isAdmin() ? "Gestión de Tareas" : "Mis Tareas" }}</h1>
+      <div class="header-actions">
+        <button class="btn btn-secondary" (click)="goToDashboard()">
+          Dashboard
+        </button>
+        <button class="btn btn-secondary" (click)="logout()">
+          Cerrar Sesión
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="task-main">
+    <div class="loading" *ngIf="loading">
+      <p>Cargando tareas...</p>
+    </div>
+
+    <div class="error" *ngIf="error">
+      <p>{{ error }}</p>
+      <button class="btn btn-primary" (click)="loadTasks()">Reintentar</button>
+    </div>
+
+    <div class="task-content" *ngIf="!loading && !error">
+      <!-- Admin: Botón crear tarea -->
+      <div class="create-section" *ngIf="isAdmin()">
+        <button
+          class="btn btn-primary"
+          (click)="showCreateForm = !showCreateForm"
+          *ngIf="!showCreateForm"
+        >
+          + Crear Nueva Tarea
+        </button>
+        <div class="create-form" *ngIf="showCreateForm">
+          <h3>Nueva Tarea</h3>
+          <div class="form-group">
+            <label for="title">Título:</label>
+            <input
+              type="text"
+              id="title"
+              [(ngModel)]="newTask.title"
+              class="form-control"
+              placeholder="Título de la tarea"
+            />
+          </div>
+          <div class="form-group">
+            <label for="description">Descripción:</label>
+            <textarea
+              id="description"
+              [(ngModel)]="newTask.description"
+              class="form-control"
+              rows="3"
+              placeholder="Descripción de la tarea"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="priority">Prioridad:</label>
+            <select
+              id="priority"
+              [(ngModel)]="newTask.priority"
+              class="form-control"
+            >
+              <option value="low">Baja</option>
+              <option value="medium">Media</option>
+              <option value="high">Alta</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="userId">Asignar a:</label>
+            <select
+              id="userId"
+              [(ngModel)]="newTask.userId"
+              class="form-control"
+            >
+              <option [ngValue]="null">Sin asignar</option>
+              <option *ngFor="let user of users" [ngValue]="user.id">
+                {{ user.username }}
+              </option>
+            </select>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" (click)="createTask()">
+              Crear
+            </button>
+            <button class="btn btn-secondary" (click)="resetCreateForm()">
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lista de tareas -->
+      <div class="tasks-grid" *ngIf="tasks.length > 0; else noTasks">
+        <div class="task-card" *ngFor="let task of tasks">
+          <!-- Modo edición (solo admin) -->
+          <div
+            class="task-edit"
+            *ngIf="isAdmin() && editingTask && editingTask.id === task.id"
+          >
+            <div class="form-group">
+              <label>Título:</label>
+              <input
+                type="text"
+                [(ngModel)]="editingTask.title"
+                class="form-control"
+              />
+            </div>
+            <div class="form-group">
+              <label>Descripción:</label>
+              <textarea
+                [(ngModel)]="editingTask.description"
+                class="form-control"
+                rows="3"
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label>Prioridad:</label>
+              <select [(ngModel)]="editingTask.priority" class="form-control">
+                <option value="low">Baja</option>
+                <option value="medium">Media</option>
+                <option value="high">Alta</option>
+              </select>
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-primary btn-sm" (click)="saveEdit()">
+                Guardar
+              </button>
+              <button class="btn btn-secondary btn-sm" (click)="cancelEdit()">
+                Cancelar
+              </button>
+            </div>
+          </div>
+
+          <!-- Modo vista -->
+          <div
+            class="task-view"
+            *ngIf="!editingTask || editingTask.id !== task.id"
+          >
+            <div class="task-header">
+              <h4>{{ task.title }}</h4>
+              <span
+                class="task-priority"
+                [class]="getPriorityClass(task.priority)"
+              >
+                {{
+                  task.priority === "low"
+                    ? "Baja"
+                    : task.priority === "medium"
+                    ? "Media"
+                    : "Alta"
+                }}
+              </span>
+            </div>
+            <p class="task-description">{{ task.description }}</p>
+            <div class="task-meta">
+              <div class="task-assignment" *ngIf="task.assignedUser">
+                <strong>Asignado a:</strong> {{ task.assignedUser.username }}
+              </div>
+              <div class="task-dates">
+                <small>Creado: {{ task.createdAt | date : "short" }}</small>
+              </div>
+            </div>
+            <div class="task-status-section">
+              <label>Estado:</label>
+              <select
+                [(ngModel)]="task.status"
+                (change)="updateTaskStatus(task.id, task.status)"
+                class="form-control"
+                [class]="getStatusClass(task.status)"
+              >
+                <option value="pending">Pendiente</option>
+                <option value="in_progress">En Progreso</option>
+                <option value="completed">Completada</option>
+              </select>
+            </div>
+            <!-- Acciones de admin -->
+            <div class="task-actions" *ngIf="isAdmin()">
+              <div class="assign-section">
+                <label>Asignar a:</label>
+                <select
+                  [(ngModel)]="task.assignedTo"
+                  (ngModelChange)="onAssignTask(task.id, $event)"
+                  class="form-control"
+                >
+                  <option [ngValue]="null">Sin asignar</option>
+                  <option *ngFor="let user of users" [ngValue]="user.id">
+                    {{ user.username }}
+                  </option>
+                </select>
+              </div>
+              <div class="action-buttons">
+                <button class="btn btn-info btn-sm" (click)="startEdit(task)">
+                  Editar
+                </button>
+                <button
+                  class="btn btn-danger btn-sm"
+                  (click)="deleteTask(task.id)"
+                >
+                  Eliminar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noTasks>
+        <div class="no-tasks">
+          <p>No hay tareas disponibles.</p>
+        </div>
+      </ng-template>
+    </div>
+  </main>
+</div>
